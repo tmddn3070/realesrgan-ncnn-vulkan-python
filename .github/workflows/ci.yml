@@ -22,12 +22,12 @@ jobs:
         uses: actions/cache@v1
         with:
           path: "VulkanSDK"
-          key: VulkanSDK-1.2.162.0-Installer
+          key: VulkanSDK-1.2.162.1-Installer
       - name: vulkansdk
         if: steps.cache-vulkansdk.outputs.cache-hit != 'true'
         run: |
-          Invoke-WebRequest -Uri https://sdk.lunarg.com/sdk/download/latest/windows/vulkan-sdk.exe -OutFile VulkanSDK-1.2.162.0-Installer.exe
-          7z x -aoa ./VulkanSDK-1.2.162.0-Installer.exe -oVulkanSDK
+          Invoke-WebRequest -Uri https://sdk.lunarg.com/sdk/download/1.2.162.1/windows/VulkanSDK-1.2.162.1-Installer.exe?Human=true -OutFile VulkanSDK-1.2.162.1-Installer.exe
+          7z x -aoa ./VulkanSDK-1.2.162.1-Installer.exe -oVulkanSDK
           Remove-Item .\VulkanSDK\Demos, .\VulkanSDK\Samples, .\VulkanSDK\Third-Party, .\VulkanSDK\Tools, .\VulkanSDK\Tools32, .\VulkanSDK\Bin32, .\VulkanSDK\Lib32 -Recurse
       - uses: actions/setup-python@v2
         with:
@@ -82,21 +82,21 @@ jobs:
         id: cache-vulkansdk
         uses: actions/cache@v1
         with:
-          path: "1.2.162.0"
-          key: vulkansdk-linux-x86_64-1.2.162.0
+          path: "1.2.162.1"
+          key: vulkansdk-linux-x86_64-1.2.162.1
       - name: vulkansdk
         if: steps.cache-vulkansdk.outputs.cache-hit != 'true'
         run: |
-          wget https://sdk.lunarg.com/sdk/download/latest/linux/vulkan-sdk.tar.gz -O vulkansdk-linux-x86_64-1.2.162.0.tar.gz
-          tar -xf vulkansdk-linux-x86_64-1.2.162.0.tar.gz
-          rm -rf 1.2.162.0/source 1.2.162.0/samples
-          find 1.2.162.0 -type f | grep -v -E 'vulkan|glslang' | xargs rm
+          wget https://sdk.lunarg.com/sdk/download/1.2.162.1/linux/vulkansdk-linux-x86_64-1.2.162.1.tar.gz?Human=true -O vulkansdk-linux-x86_64-1.2.162.1.tar.gz
+          tar -xf vulkansdk-linux-x86_64-1.2.162.1.tar.gz
+          rm -rf 1.2.162.1/source 1.2.162.1/samples
+          find 1.2.162.1 -type f | grep -v -E 'vulkan|glslang' | xargs rm
       - name: Install dependencies
         run: |
           pip install build
       - name: Build
         run: |
-          export VULKAN_SDK=`pwd`/1.2.162.0/x86_64 
+          export VULKAN_SDK=`pwd`/1.2.162.1/x86_64 
           export CMAKE_FLAGS="-DPY_VERSION=${{ matrix.python-version }}"
           python -m build -w .
   macos:
@@ -113,17 +113,17 @@ jobs:
         id: cache-vulkansdk
         uses: actions/cache@v1
         with:
-          path: "vulkansdk-macos-1.2.162.0"
-          key: vulkansdk-macos-1.2.162.0
+          path: "vulkansdk-macos-1.2.162.1"
+          key: vulkansdk-macos-1.2.162.1
       - name: vulkansdk
         if: steps.cache-vulkansdk.outputs.cache-hit != 'true'
         run: |
-          wget https://sdk.lunarg.com/sdk/download/latest/mac/vulkan-sdk.dmg -O vulkansdk-macos-1.2.162.0.dmg
-          hdiutil attach vulkansdk-macos-1.2.162.0.dmg
-          cp -r /Volumes/vulkansdk-macos-1.2.162.0 .
-          rm -rf vulkansdk-macos-1.2.162.0/Applications
-          find vulkansdk-macos-1.2.162.0 -type f | grep -v -E 'vulkan|glslang|MoltenVK' | xargs rm
-          hdiutil detach /Volumes/vulkansdk-macos-1.2.162.0
+          wget https://sdk.lunarg.com/sdk/download/1.2.162.1/mac/vulkansdk-macos-1.2.162.1.dmg?Human=true -O vulkansdk-macos-1.2.162.1.dmg
+          hdiutil attach vulkansdk-macos-1.2.162.1.dmg
+          cp -r /Volumes/vulkansdk-macos-1.2.162.1 .
+          rm -rf vulkansdk-macos-1.2.162.1/Applications
+          find vulkansdk-macos-1.2.162.1 -type f | grep -v -E 'vulkan|glslang|MoltenVK' | xargs rm
+          hdiutil detach /Volumes/vulkansdk-macos-1.2.162.1
       - uses: actions/setup-python@v2
         with:
           python-version: ${{ matrix.python-version }}
@@ -136,9 +136,9 @@ jobs:
           pip install build
       - name: Build
         run: |
-          export VULKAN_SDK=`pwd`/vulkansdk-macos-1.2.162.0/macOS
+          export VULKAN_SDK=`pwd`/vulkansdk-macos-1.2.162.1/macOS
           export CMAKE_FLAGS="-DUSE_STATIC_MOLTENVK=ON -DCMAKE_OSX_ARCHITECTURES="x86_64" \
-          -DVulkan_INCLUDE_DIR=`pwd`/vulkansdk-macos-1.2.162.0/MoltenVK/include \
-          -DVulkan_LIBRARY=`pwd`/vulkansdk-macos-1.2.162.0/MoltenVK/MoltenVK.xcframework/macos-arm64_x86_64/libMoltenVK.a \
+          -DVulkan_INCLUDE_DIR=`pwd`/vulkansdk-macos-1.2.162.1/MoltenVK/include \
+          -DVulkan_LIBRARY=`pwd`/vulkansdk-macos-1.2.162.1/MoltenVK/MoltenVK.xcframework/macos-arm64_x86_64/libMoltenVK.a \
           -DPY_VERSION=${{ matrix.python-version }}"
           python -m build -w .
